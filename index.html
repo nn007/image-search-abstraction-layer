@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Image Search Abstraction Layer</title>
+	<style>
+		div{
+		  min-height: 100px;
+		  display: flex;
+		  justify-content: space-between;
+		  border: 1px solid #000;
+		}
+		.hidden{
+		  display: none;
+		}
+	</style>
+</head>
+<body>
+	<input type="text" id="text" placeholder="search..."/>
+	<button id="button" >search</button>
+	<section></section>
+
+
+
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script >
+
+$(document).ready(function(){  
+
+	$("#text").keypress(function(enter){
+        if(enter.which == 13){
+          enter.preventDefault();
+          $("#button").click();
+        }
+    });
+
+  $('#button').on('click',function(){
+    var inputUser = $('#text').val();
+    $('section').html("");
+    $.ajax({ 
+      url: "https://cryptic-ridge-9197.herokuapp.com/api/imagesearch/"+inputUser+"%20funny?offset=10",
+      dataType: 'json' ,
+      success: function(data){ 
+        for(let i=0; i<data.length; i++){ 
+           
+          var div = $("<div></div>"),
+              p = $("<p id='repoFolder' data-value="+ data[i].snippet +" ></p>"),
+              img = $('<img/>'),
+              a = $("<a target='_blank'>"+data[i].snippet+"</a>");
+
+            p.text(data[i].snippet);
+
+            img.attr('src',data[i].thumbnail);
+            a.attr('href',data[i].context);
+            div.append(p).append(a).append(img);
+            
+            $('section').append(div);
+            $("#text").val("");
+        }
+      },
+      error: function(errorMessage){
+          alert("You've exceeded the number of calls !");
+       } 
+
+    });
+  });  
+  
+});
+
+	</script>
+</body>
+</html>
